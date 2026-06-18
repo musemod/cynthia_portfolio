@@ -213,10 +213,7 @@ body {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.project-link-icon {
-    width: 14px;            /* was 4px — typo */
-    height: 14px;           /* was 4px — typo */
-}
+
 .hero-video-wrapper iframe {
     position: absolute;      /* fills the aspect-ratio wrapper completely */
     top: 0; left: 0;
