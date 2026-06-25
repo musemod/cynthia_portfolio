@@ -6,17 +6,59 @@
 {% block content %}
 <div class="profile">
     <div class="profile-picture">
-        <img src="{{ url_for('static', filename='img/logo.jpg') }}">
+        <img src="{{ url_for('static', filename='img/CLWprofile.jpg') }}"
+             alt="Cynthia Lee Wong">
     </div>
     <h1>{{ title }}</h1>
+    {# All external links use target="_blank" rel="noopener noreferrer" — opens in new tab, prevents new tab accessing this page via window.opener #}
+
+    {# TO DO:  maybe have social links and hero section handling also inside list_section.html - even though not reused? #}
+
+    <div class="social-links">
+        {% for link in social_links %}
+        <a href="{{ link.url }}"
+           target="_blank"
+           rel="noopener noreferrer"
+           aria-label="{{ link.label }}">
+            <img src="{{ url_for('static', filename=link.icon) }}"
+                 alt="{{ link.label }}"
+                 class="social-icon">
+        </a>
+        {% endfor %}
+    </div>
 </div>
 
 <main class="page-content">
-    <section class="about-section">
+
+    <section class="list-section">
         <h2>About Me</h2>
-        <p>{{ about_text }}</p>
+        <p>{{ about_text }} Check out my
+            <a href="{{ website_url }}" target="_blank" rel="noopener noreferrer">
+                artist / musician website
+            </a>.
+        </p>
     </section>
+
+    {# Hero video — autoplays silently. mute=1 required by browsers for autoplay to work. loop=1 + playlist= same id = single video loop (YouTube quirk). controls=0 hides player UI. youtube-nocookie.com avoids tracking cookies on autoplay #}
+
+    <section class="hero-video-section">
+        <div class="hero-video-wrapper">
+            {% for data in hero_data %}
+            <iframe
+                src="{{ data.youtube_link_auto }}"
+                title="{{ data.title }}"
+                allow="{{ data.allow }}"
+                allowfullscreen>
+            </iframe>
+           {% endfor %}
+        </div>
+    </section>
+
+    {# render_list_section generates its own <section> — no wrapper needed here #}
+      
+    {{ render_list_section("Tech Projects", tech_projects) }}
     {{ render_list_section("Work Experience", work_experiences) }}
     {{ render_list_section("Education", education) }}
+
 </main>
 {% endblock %}

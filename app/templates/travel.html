@@ -1,8 +1,45 @@
 {% extends "base.html" %}
 
-{% block title %}Travel Map{% endblock %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block head %}
+ <!-- Leaflet CSS in <head> so map styles load before the page renders. Will create local copy before containerization at later stage-->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+{% endblock %}
 
 {% block content %}
-<h1>Travel Map</h1>
-<p>Add map here</p>
+<section class="travel">
+    <h1>Places I've Traveled</h1>
+    <div id="travel-map"></div>
+</section>
+
+{# Leaflet JS loads AFTER the map div — if loaded in <head>, L.map('travel-map') would fail because the div doesn't exist in the DOM yet. Should download local copy of JS script before containerization step #}
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+<script>
+    // VS Code's linter treats everything in here as JavaScript
+
+    // tojson is a Jinja filter — converts Python list to JS-readable JSON array.
+    // This 1 line is the only Jinja inside this script block.
+    // Without tojson, JS would see a Python string it can't parse.
+    const locations = {{ locations | tojson }};
+
+    // initialize map inside the div#travel-map, centered on world view
+    const map = L.map('travel-map').setView([20, 0], 2);
+
+    // OpenStreetMap tiles — free open source, no API key needed.
+    // {s}/{z}/{x}/{y} are Leaflet's placeholders, not Jinja — leave them as-is
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+
+    // iterate over locations from portfolio_data.py, add a marker and popup for each
+    locations.forEach(function(location) {
+        L.marker([location.lat, location.lng])
+            .addTo(map)
+            .bindPopup(location.name);
+    });
+</script>
+
 {% endblock %}
