@@ -45,7 +45,7 @@ TECH_PROJECTS = [
 
 WORK_EXPERIENCES = [
     {
-        "title": "Production Engineering Intern",
+        "title": "Production Engineering Fellow",
         "subtitle": "MLH & Meta",
         "date": "Summer 2026",
         "description": "Building and deploying a Flask web app with a team.",
