@@ -1,6 +1,11 @@
 import os
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 from dotenv import load_dotenv
+from playhouse.shortcuts import model_to_dict
+
+from app.db import mydb
+from app.models import TimelinePost
+
 
 from app.portfolio_data import SOCIAL_LINKS, ABOUT_TEXT, HERO_DATA, TECH_PROJECTS, WEBSITE_URL, EDUCATION, HOBBIES_PODCAST, HOBBIES_ART, HOBBIES_MUSIC, WORK_EXPERIENCES, LOCATIONS
 
@@ -43,3 +48,37 @@ def hobbies():
 @app.route('/travel')
 def travel():
     return render_template('travel.html', title="Travel Map", locations=LOCATIONS)
+
+# added status codes and input validation
+@app.route('/api/timeline_post', methods=['POST'])
+def post_time_line_post():
+    name = request.form.get('name')
+    email = request.form.get('email')
+    content = request.form.get('content')
+
+    if not name or not email or not content:
+        return {'error': 'name, email, and content are all required'}, 400
+
+    timeline_post = TimelinePost.create(name=name, email=email, content=content)
+
+    return model_to_dict(timeline_post), 201
+    
+
+@app.route('/api/timeline_post', methods=['GET'])
+def get_time_line_post():
+    return {
+        'timeline_posts': [
+            model_to_dict(p)
+            for p in 
+            TimelinePost.select().order_by(TimelinePost.created_at.desc())
+        ]
+    }
+
+@app.route('/api/timeline_post/<int:id>', methods=['DELETE'])
+def delete_time_line_post(id):
+    post = TimelinePost.get_or_none(TimelinePost.id == id)
+    if post is None:
+        return {'error': f'No post found with id {id}'}, 404
+
+    post.delete_instance()
+    return {'deleted_id': id}, 200
