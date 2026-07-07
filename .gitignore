@@ -2,6 +2,8 @@
 __pycache__
 *.pyc
 .env
+*.deb
+*.log
 python3-virtualenv
 flask.sqlite
 .DS_Store
