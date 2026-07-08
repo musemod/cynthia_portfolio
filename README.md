@@ -1,7 +1,9 @@
 # Production Engineering - Portfolio Site
 
 Backend: Flask, Python
+
 Frontend: Jinja, Javascript
+
 DevOps & Scripting: Bash
 
 This is my in-progress portfolio site for the MLH / Meta PE Fellowship.
