@@ -22,6 +22,7 @@ def inject_nav():
         {"label": "Home", "endpoint": "index"},
         {"label": "Hobbies", "endpoint": "hobbies"},
         {"label": "Travel", "endpoint": "travel"},
+        {"label": "Timeline", "endpoint": "timeline"},
     ],
     url=os.getenv("URL") # reads from .env — will be ocalhost:5000 locally,
                          # real domain in production when MLH deploys in future weeks
@@ -48,6 +49,10 @@ def hobbies():
 @app.route('/travel')
 def travel():
     return render_template('travel.html', title="Travel Map", locations=LOCATIONS)
+
+@app.route('/timeline')
+def timeline():
+    return render_template('timeline.html', title="Timeline")
 
 # added status codes and input validation
 @app.route('/api/timeline_post', methods=['POST'])
