@@ -5,10 +5,25 @@
 
 set -e  # exit immediately if any command fails, so we don't silently continue on a broken request
 
-BASE_URL="http://localhost:5000/api/timeline_post"
+# script should run from wherever invoked
+# resolves directory this script lives in, then go up 1 level to repo root
+# BASH_SOURCE is a built-in bash array variable that bash maintains automatically for every running script, similar to how $1, $2, $@, or $0 are already populated before script even starts. 
+# BASH_SOURCE is an array tracking the source filename at each level of the call stack:
+    # BASH_SOURCE[0] = the file currently executing (the innermost/current one)
+    # BASH_SOURCE[1] = the file that sourced or called that file, if any and so on up the chain
+# Piping through cd + pwd forces it into a full absolute path
 
-# Generate a random suffix so repeated runs don't collide on identical content,
-# and so we can visually confirm THIS run's post
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ENV_FILE="$(cd "$SCRIPT_DIR/.." && pwd)/.env"
+
+set -a    # auto-export every var defined while sourcing
+source "$ENV_FILE"
+set +a    # set +a turns off the "allexport" feature, meaning that newly created or modified variables will no longer be automatically exported to child processes
+
+# :? gives a clear error if the var is missing, instead of curl silently hitting an empty URL
+BASE_URL="${TEST_BASE_URL:?TEST_BASE_URL not set in .env}"
+
+# Generate a random suffix so repeated runs don't collide on identical content, so we can visually confirm THIS run's post
 RANDOM_ID=$RANDOM
 NAME="test_user_${RANDOM_ID}"
 EMAIL="test${RANDOM_ID}@example.com"
@@ -23,8 +38,7 @@ POST_RESPONSE=$(curl --silent --request POST "$BASE_URL" \
 
 echo "POST response: $POST_RESPONSE"
 
-# Pull the created post's id out of the JSON response using python's json module
-# (avoids depending on jq being installed)
+# Pull the created post's id out of the JSON response using python's json module (avoids depending on jq being installed)
 POST_ID=$(echo "$POST_RESPONSE" | python3 -c "import sys, json; print(json.load(sys.stdin)['id'])")
 
 if [ -z "$POST_ID" ]; then
