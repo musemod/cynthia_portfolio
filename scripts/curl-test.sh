@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/usr/bin/env bash
 # Tests the /api/timeline_post endpoints (POST, GET, DELETE) against a locally
 # running Flask dev server. Creates a random test post, confirms it shows up
 # via GET, then deletes it so test data doesn't pile up in the shared database.
