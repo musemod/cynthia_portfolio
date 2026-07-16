@@ -1,4 +1,7 @@
+# __init__.py
+
 import os
+import re
 from flask import Flask, render_template, request
 from dotenv import load_dotenv
 from playhouse.shortcuts import model_to_dict
@@ -15,6 +18,7 @@ app = Flask(__name__)
 # Should refactor to application factory pattern (create_app() + config.py)
 # in future weeks when we have multiple environments (dev/test/prod) and Docker.
 
+
 # adds nav links to every template
 @app.context_processor
 def inject_nav():
@@ -24,7 +28,7 @@ def inject_nav():
         {"label": "Travel", "endpoint": "travel"},
         {"label": "Timeline", "endpoint": "timeline"},
     ],
-    url=os.getenv("URL") # reads from .env — will be ocalhost:5000 locally,
+    url=os.getenv("URL") # reads from .env — will be localhost:5000 locally,
                          # real domain in production when MLH deploys in future weeks
     )
 
@@ -54,15 +58,20 @@ def travel():
 def timeline():
     return render_template('timeline.html', title="Timeline")
 
-# added status codes and input validation
+# regex email pattern
+EMAIL_PATTERN = re.compile(r"^[^\s@]+@[^\s@]+\.[^\s@]+$")
+
 @app.route('/api/timeline_post', methods=['POST'])
 def post_time_line_post():
-    name = request.form.get('name')
-    email = request.form.get('email')
-    content = request.form.get('content')
+    name = (request.form.get('name') or '').strip()
+    email = (request.form.get('email') or '').strip()
+    content = (request.form.get('content') or '').strip()
 
     if not name or not email or not content:
         return {'error': 'name, email, and content are all required'}, 400
+
+    if not EMAIL_PATTERN.match(email):
+        return {'error': 'email must be a valid email address'}, 400
 
     timeline_post = TimelinePost.create(name=name, email=email, content=content)
 
@@ -87,3 +96,17 @@ def delete_time_line_post(id):
 
     post.delete_instance()
     return {'deleted_id': id}, 200
+
+
+
+
+def init_db():
+    mydb.connect()
+    mydb.create_tables([TimelinePost])
+    
+
+
+init_db()
+
+if __name__ == '__main__':
+    app.run(debug=True)

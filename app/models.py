@@ -1,3 +1,5 @@
+# app/models.py
+
 import datetime
 from peewee import Model, CharField, TextField, DateTimeField
 from app.db import mydb
@@ -15,6 +17,4 @@ class TimelinePost(Model):
     class Meta:
         database = mydb
 
-mydb.connect()
-mydb.create_tables( [TimelinePost] )
 
