@@ -24,13 +24,14 @@ class TestTimelinePost(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         print('setupClass: bind models')
-        cls._original_database = TimelinePost._meta.database  # save what it was bound to before we touch it
-        test_db.bind(MODELS, bind_refs=False, bind_backrefs=False)
+        # bind_ctx enters here; __exit__ (in tearDownClass) restores TimelinePost to whatever it was bound to before this class ran.
+        cls._bind_ctx = test_db.bind_ctx(MODELS, bind_refs=False, bind_backrefs=False)
+        cls._bind_ctx.__enter__()
     
     @classmethod
     def tearDownClass(cls):
         print('tearDownClass: restore original binding')
-        TimelinePost._meta.database = cls._original_database
+        cls._bind_ctx.__exit__(None, None, None)
 
     # Table creation + fixture data DOES represent mutable state, so it needs to happen per-test. Otherwise 1 test's changes (e.g. deleting a post) would leak into the next test and make results depend on execution order.
     def setUp(self):
