@@ -12,7 +12,10 @@ cd "$PROJECT_DIR"
 echo "2: Pulling latest code from GitHub..."
 git fetch && git reset origin/main --hard
 
-echo "3: Rebuilding image (if code changed) and starting container..."
+echo "3: spin Docker containers down first"
+ docker compose -f docker-compose.prod.yml down
+
+echo "4: Rebuilding image (if code changed) and starting container..."
 docker compose -f docker-compose.prod.yml up -d --build
 
 echo "Done! Site should be live."
