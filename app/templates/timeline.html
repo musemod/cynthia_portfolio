@@ -26,6 +26,10 @@
     <textarea id="content" name="content" rows="3" required></textarea>
 
     <button type="submit">Post</button>
+
+    <div id="timeline-form-error" class="timeline-form-error" role="alert" hidden></div>
+
+
   </form>
 
   <div id="timeline-posts" class="timeline-posts">
@@ -41,6 +45,21 @@ const form = document.getElementById('timeline-form');
 const postsContainer = document.getElementById('timeline-posts');
 const nameInput = document.getElementById('name');
 const contentInput = document.getElementById('content');
+
+// grab the error container
+const formError = document.getElementById('timeline-form-error');
+
+// helpers to show/clear the error message
+function showFormError(message) {
+  formError.textContent = message;
+  formError.hidden = false;
+}
+
+function clearFormError() {
+  formError.textContent = '';
+  formError.hidden = true;
+}
+
 
 function sha256Hex(str) {
   return sha256(str);
@@ -92,6 +111,7 @@ contentInput.addEventListener('input', () => {
 
 form.addEventListener('submit', async (e) => {
   e.preventDefault();
+  clearFormError(); // clear any stale error from a prior attempt
 
   nameInput.value = nameInput.value.trim();
   contentInput.value = contentInput.value.trim();
@@ -110,6 +130,18 @@ form.addEventListener('submit', async (e) => {
     form.reset();
     fetchPosts();
   } else {
+    // read the error message from the JSON body. Both Flask's 400 validation errors and Nginx's 429 rate-limit
+    // response use the same {"error": "..."} shape, so this one branch covers both without needing to special-case the status code.
+    let message = 'Something went wrong. Please try again.';
+    try {
+      const data = await res.json();
+      if (data && data.error) {
+        message = data.error;
+      }
+    } catch (err) {
+        console.error('Failed to parse error response as JSON', err)
+    }
+    showFormError(message);
     console.error('Failed to create timeline post', res.status);
   }
 });
