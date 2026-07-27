@@ -1,7 +1,12 @@
 #!/usr/bin/env bash
-# Tests the /api/timeline_post endpoints (POST, GET, DELETE) against a locally
-# running Flask dev server. Creates a random test post, confirms it shows up
-# via GET, then deletes it so test data doesn't pile up in the shared database.
+
+# Precondition: .env must have TESTING=false, and the dev containers
+# must already be running (docker compose up -d).
+# Do NOT use docker-compose.prod.yml because:
+# a.) nginx-certbot needs domain to resolve via DNS (cert errors since host requesting the cert cynthiawong.duckdns.org points at VPS, not local laptop — so spinning up prod compose locally means certbot can't validate the domain against local machine.) 
+# b.) Rate limiting of 1 POST per minute will prevent repeated runs of POST within that minute
+
+# Tests the /api/timeline_post endpoints (POST, GET, DELETE) against a running Flask dev server. Creates a random test post, confirms it shows up via GET, then deletes it so test data doesn't pile up in the shared database.
 
 set -e  # exit immediately if any command fails, so we don't silently continue on a broken request
 
@@ -22,6 +27,7 @@ set +a    # set +a turns off the "allexport" feature, meaning that newly created
 
 # :? gives a clear error if the var is missing, instead of curl silently hitting an empty URL
 BASE_URL="${TEST_BASE_URL:?TEST_BASE_URL not set in .env}"
+TESTING=false
 
 # Generate a random suffix so repeated runs don't collide on identical content, so we can visually confirm THIS run's post
 RANDOM_ID=$RANDOM
