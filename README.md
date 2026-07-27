@@ -174,7 +174,7 @@ Run:
 $ scripts/curl-test.sh
 ```
 
-This requires the real MySQL service to be running inside Docker (see [Running the Application](#running-the-application-linux) for dev vs. VPS commands), and `.env` should have `TESTING=false`.
+This requires the real MySQL service to be running inside Docker (see [Running the Application](#running-the-application-linux) for local dev vs. VPS commands), and `.env` should have `TESTING=false`. In curl-test.sh, you should choose either TEST_BASE_URL for local testing or TEST_BASE_URL_PROD for testing on VPS server.
 
 ---
 

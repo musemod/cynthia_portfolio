@@ -4,7 +4,8 @@
 # if the git commands or docker build fail, the script stops instead of continuing to a broken deploy
 set -e
 
-PROJECT_DIR=/root/cynthia_portfolio/
+# path resolution
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 echo "1: Moving into project folder..."
 cd "$PROJECT_DIR"

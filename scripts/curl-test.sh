@@ -29,7 +29,15 @@ source "$ENV_FILE"
 set +a    # set +a turns off the "allexport" feature, meaning that newly created or modified variables will no longer be automatically exported to child processes
 
 # :? gives a clear error if the var is missing, instead of curl silently hitting an empty URL
-BASE_URL="${TEST_BASE_URL:?TEST_BASE_URL not set in .env}"
+
+# CHOOSE ONE (local or VPS):
+
+# 1. for running locally
+# BASE_URL="${TEST_BASE_URL:?TEST_BASE_URL not set in .env}"
+# OR
+# 2. for running on VPS server (production)
+BASE_URL="${TEST_BASE_URL_PROD:?TEST_BASE_URL_PROD not set in .env}"
+
 TESTING=false
 
 # Generate a random suffix so repeated runs don't collide on identical content, so we can visually confirm THIS run's post
