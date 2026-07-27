@@ -1,12 +1,15 @@
 #!/usr/bin/env bash
 
-# Precondition: .env must have TESTING=false, and the dev containers
-# must already be running (docker compose up -d).
-# Do NOT use docker-compose.prod.yml because:
+# Precondition: .env must have TESTING=false and relevant Docker containers running
+
+# If on local machine, run: docker compose up -d
+# Do NOT use docker-compose.prod.yml on local machine because:
 # a.) nginx-certbot needs domain to resolve via DNS (cert errors since host requesting the cert cynthiawong.duckdns.org points at VPS, not local laptop — so spinning up prod compose locally means certbot can't validate the domain against local machine.) 
 # b.) Rate limiting of 1 POST per minute will prevent repeated runs of POST within that minute
 
-# Tests the /api/timeline_post endpoints (POST, GET, DELETE) against a running Flask dev server. Creates a random test post, confirms it shows up via GET, then deletes it so test data doesn't pile up in the shared database.
+# If on VPS (production environment with domain already set up with appropriate server_name in user_conf.d/myportfolio.conf), run: docker compose -f docker-compose.prod.yml up -d
+
+# curl-test.sh tests the /api/timeline_post endpoints (POST, GET, DELETE) against a running Flask dev server. Creates a random test post, confirms it shows up via GET, then deletes it so test data doesn't pile up in the shared database.
 
 set -e  # exit immediately if any command fails, so we don't silently continue on a broken request
 
