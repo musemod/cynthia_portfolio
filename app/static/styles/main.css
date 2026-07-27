@@ -412,6 +412,11 @@ body {
   gap: 16px;
 }
 
+.timeline-form-error {
+  color: #b00020;
+  margin-top: 0.5rem;
+}
+
 .timeline-avatar {
   width: 48px;
   height: 48px;
