@@ -75,7 +75,7 @@ def post_time_line_post():
 
     timeline_post = TimelinePost.create(name=name, email=email, content=content)
 
-    return model_to_dict(timeline_post), 201
+    return model_to_dict(timeline_post), 301 # create error on purpose to fail test here
     
 
 @app.route('/api/timeline_post', methods=['GET'])

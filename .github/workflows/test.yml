@@ -1,0 +1,34 @@
+name: Run Tests # define name of Github actions workflow
+on: # git push or PR event triggers github actions workflow on main branch 
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs: # create job named Run Tests running on latest supported ubuntu VM
+  test:
+    runs-on: ubuntu-latest
+    name: Run Tests
+    env: # add env variable necessary to run tests
+      TESTING: true
+    steps: # steps to run tests, from checking out the repo, setting up python & python virtualenv, install dependencies, and lastly, run tests
+      - name: Checkout Repository
+        uses: actions/checkout@v7
+
+      - name: Setup Python
+        uses: actions/setup-python@v7
+        with:
+          python-version: '3.12'
+
+      - name: Setup Python Virtual Environment
+        run: python -m venv python3-virtualenv
+
+      - name: Install Dependencies
+        run: python3-virtualenv/bin/pip install -r requirements.txt
+
+      - name: Run Test Script
+        run: | # pipe to run multi-line commands
+          source python3-virtualenv/bin/activate
+          ./scripts/run-test.sh
