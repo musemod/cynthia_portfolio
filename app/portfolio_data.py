@@ -16,7 +16,7 @@ SOCIAL_LINKS = [
 ]
 
 # about me constants
-ABOUT_TEXT = "Hello! I'm an MLH Production Engineering Fellow passionate about merging tech, visuals, and music."
+ABOUT_TEXT = "Hello! I'm an MLH / Meta Production Engineering Fellow passionate about merging tech, visuals, and music."
 WEBSITE_URL = "https://www.cynthialeewong.com"
 
 HERO_DATA = [

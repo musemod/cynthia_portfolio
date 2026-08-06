@@ -1,5 +1,5 @@
 name: Run Tests # define name of Github actions workflow
-on: # git PR event triggers github actions workflow on main branch 
+on: # git PR event triggers github actions workflow on main 
   # push: # commenting this out since deploy.yml will run test suite when git push to main
   #   branches:
   #     - main
