@@ -16,7 +16,7 @@ SOCIAL_LINKS = [
 ]
 
 # about me constants
-ABOUT_TEXT = "Hello! I'm an MLH Fellow passionate about merging tech, visuals, and music."
+ABOUT_TEXT = "Hello! I'm an MLH Production Engineering Fellow passionate about merging tech, visuals, and music."
 WEBSITE_URL = "https://www.cynthialeewong.com"
 
 HERO_DATA = [
@@ -47,8 +47,8 @@ WORK_EXPERIENCES = [
     {
         "title": "Production Engineering Fellow",
         "subtitle": "MLH & Meta",
-        "date": "Summer 2026",
-        "description": "Building and deploying a Flask web app with a team.",
+        "date": "Summer 2026 - present",
+        "description": "Building and deploying a Flask web app",
     },
     {
         "title": "Software Engineer (backend)",
