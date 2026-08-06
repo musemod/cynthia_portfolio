@@ -7,9 +7,18 @@ on:
   workflow_dispatch: # trigger adds a "Run workflow" manual option button
 
 jobs:
+  test:
+    name: Run Tests
+    uses: ./.github/workflows/test.yml
+    secrets: inherit
+  
+  
   deploy:
     name: Deploy to VPS
+    # env: # add env variable necessary to run tests
+    #   TESTING: false # commented OUT since each job spins up own fresh, isolated VM runner so would be separate from Run Tests job
     runs-on: ubuntu-latest
+    needs: test # deploy only if test job succeeds
     steps: # create a file called ~/.ssh/deploy-key.pem which contains the SSH_PRIVATE_KEY secret
     # set correct permission chmod 600 for file
     # create a config file in /home/runner/.ssh/ (Github spins up own fresh, temp VM in the cloud for every workflow run and deletes this VM after workflow run). The SSH config temporarily exists. In this file, added a host directive named "my-vm" and all the ssh options underneath including HostName, User, Identity File. This allows us to just use "ssh my-vps" to connect to the droplet instead of full ssh command "ssh root@<ip> -i ~/.ssh/deploy-key.pem -o StrictHostKeyChecking=no".
@@ -17,7 +26,7 @@ jobs:
         run: |
           mkdir -p ~/.ssh/
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/deploy-key.pem
-          chmod 600 ~/.ssh/deploy-key.pem 
+          chmod 600 ~/.ssh/deploy-key.pem
           cat >> ~/.ssh/config <<END
           Host my-vps
             HostName $SSH_IP
@@ -26,10 +35,26 @@ jobs:
             StrictHostKeyChecking no
           END
         env:
-          SSH_USER: ${{ secrets.SSH_USER }} # add secrets to Github
+          SSH_USER: ${{ secrets.SSH_USER }}
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_IP: ${{ secrets.SSH_IP }}
-        
-      - name: Deploy Site
+
+      - name: Deploy Site # run redeploy-site script
         run: ssh my-vps 'cd ${{ secrets.PROJECT_ROOT }} && chmod +x scripts/redeploy-site.sh && ./scripts/redeploy-site.sh'
 
+      - name: Print Container Status # docker compose ps to show currently running containers
+        run: ssh my-vps 'cd ${{ secrets.PROJECT_ROOT }} && docker compose -f docker-compose.prod.yml ps'
+
+      - name: Verify Containers Running # check healthy container status
+# [ -n "..." ] checks the string isn't empty
+# -q prints only container IDs (empty if none running)
+        run: |
+          ssh my-vps 'cd ${{ secrets.PROJECT_ROOT }} && [ -n "$(docker compose -f docker-compose.prod.yml ps --status running -q)" ] || exit 1'
+
+      - name: Discord Notification - Success # depends on success() condition
+        if: success()
+        run: curl -s -X POST "${{ secrets.DISCORD_WEBHOOK }}" -d "content=🚀 Deployment Successful"
+
+      - name: Discord Notification - Failure # depends on failure() condition
+        if: failure()
+        run: curl -s -X POST "${{ secrets.DISCORD_WEBHOOK }}" -d "content=🚨 Deployment Failed"

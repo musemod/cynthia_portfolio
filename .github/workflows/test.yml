@@ -1,11 +1,12 @@
 name: Run Tests # define name of Github actions workflow
-on: # git push or PR event triggers github actions workflow on main branch 
-  push:
-    branches:
-      - main
+on: # git PR event triggers github actions workflow on main branch 
+  # push: # commenting this out since deploy.yml will run test suite when git push to main
+  #   branches:
+  #     - main
   pull_request:
     branches:
       - main
+  workflow_call: # make this workflow reusable and callable by other workflows
 
 jobs: # create job named Run Tests running on latest supported ubuntu VM
   test:
@@ -32,3 +33,7 @@ jobs: # create job named Run Tests running on latest supported ubuntu VM
         run: | # pipe to run multi-line commands
           source python3-virtualenv/bin/activate
           ./scripts/run-test.sh
+
+      - name: Discord Notification on Test Failure
+        if: failure()
+        run: curl -s -X POST "${{ secrets.DISCORD_WEBHOOK }}" -d "content=🚨 Tests Failed — Deployment Skipped"  
