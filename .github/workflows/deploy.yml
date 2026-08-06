@@ -4,13 +4,15 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch: # trigger adds a "Run workflow" button, have to check if not outdated
+  workflow_dispatch: # trigger adds a "Run workflow" button
 
 jobs:
   deploy:
     name: Deploy to VPS
     runs-on: ubuntu-latest
-    steps:
+    steps: # create a file called ~/.ssh/deploy-key.pem which contains the SSH_PRIVATE_KEY secret
+    # set correct permission chmod 600 for file
+    # create a config file in /home/runner/.ssh/ (Github spins up own fresh, temp VM in the cloud for every workflow run and deletes this VM after workflow run). The SSH config temporarily exists. In this file, added a host directive named "my-vm" and all the ssh options underneath including HostName, User, Identity File. This allows us to just use "ssh my-vps" to connect to the droplet instead of full ssh command "ssh root@<ip> -i ~/.ssh/deploy-key.pem -o StrictHostKeyChecking=no".
       - name: Configure SSH
         run: |
           mkdir -p ~/.ssh/
@@ -28,6 +30,6 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_IP: ${{ secrets.SSH_IP }}
         
-      - name: Print project root dir 
+      - name: Print project root dir # connect to droplet using command "ssh my-vps" and executes 'cd ${{ secrets.PROJECT_ROOT}} && pwd'. This cd into our proj root dir and runs pwd to print out the dir.
         run: ssh my-vps 'cd ${{ secrets.PROJECT_ROOT }} && pwd'
 
