@@ -30,6 +30,6 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           SSH_IP: ${{ secrets.SSH_IP }}
         
-      - name: Print project root dir # connect to droplet using command "ssh my-vps" and executes 'cd ${{ secrets.PROJECT_ROOT}} && pwd'. This cd into our proj root dir and runs pwd to print out the dir.
-        run: ssh my-vps 'cd ${{ secrets.PROJECT_ROOT }} && pwd'
+      - name: Deploy Site
+        run: ssh my-vps 'cd ${{ vars.PROJECT_ROOT }} && chmod +x scripts/redeploy-site.sh && ./scripts/redeploy-site.sh'
 
