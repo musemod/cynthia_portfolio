@@ -31,5 +31,5 @@ jobs:
           SSH_IP: ${{ secrets.SSH_IP }}
         
       - name: Deploy Site
-        run: ssh my-vps 'cd ${{ vars.PROJECT_ROOT }} && chmod +x scripts/redeploy-site.sh && ./scripts/redeploy-site.sh'
+        run: ssh my-vps 'cd ${{ secrets.PROJECT_ROOT }} && chmod +x scripts/redeploy-site.sh && ./scripts/redeploy-site.sh'
 
