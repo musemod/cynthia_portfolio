@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch: # trigger adds a "Run workflow" button
+  workflow_dispatch: # trigger adds a "Run workflow" manual option button
 
 jobs:
   deploy:
