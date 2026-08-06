@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main
-  workflow_dispatch: # trigger adds a "Run workflow" button in case we need to manually trigger it.
+  workflow_dispatch: # trigger adds a "Run workflow" button, have to check if not outdated
 
 jobs:
   deploy:
