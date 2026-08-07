@@ -36,4 +36,4 @@ jobs: # create job named Run Tests running on latest supported ubuntu VM
 
       - name: Discord Notification on Test Failure
         if: failure()
-        run: curl -s -X POST "${{ secrets.DISCORD_WEBHOOK }}" -d "content=🚨 Tests Failed — Deployment Skipped"  
+        run: curl -s -X POST "${{ secrets.DISCORD_WEBHOOK }}" -d "content=Tests Failed — Deployment Skipped"  

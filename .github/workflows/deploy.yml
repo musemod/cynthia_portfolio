@@ -53,8 +53,8 @@ jobs:
 
       - name: Discord Notification - Success # depends on success() condition
         if: success()
-        run: curl -s -X POST "${{ secrets.DISCORD_WEBHOOK }}" -d "content=🚀 Deployment Successful"
+        run: curl -s -X POST "${{ secrets.DISCORD_WEBHOOK }}" -d "content=Deployment Successful"
 
       - name: Discord Notification - Failure # depends on failure() condition
         if: failure()
-        run: curl -s -X POST "${{ secrets.DISCORD_WEBHOOK }}" -d "content=🚨 Deployment Failed"
+        run: curl -s -X POST "${{ secrets.DISCORD_WEBHOOK }}" -d "content=Deployment Failed"
