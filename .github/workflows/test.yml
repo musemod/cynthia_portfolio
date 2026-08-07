@@ -1,6 +1,6 @@
 name: Run Tests # define name of Github actions workflow
 on: # git PR event triggers github actions workflow on main 
-  # push: # commenting this out since deploy.yml will run test suite when git push to main
+  # push: # commenting out since deploy.yml will run test suite when git push to main
   #   branches:
   #     - main
   pull_request:
@@ -14,7 +14,7 @@ jobs: # create job named Run Tests running on latest supported ubuntu VM
     name: Run Tests
     env: # add env variable necessary to run tests
       TESTING: true
-    steps: # steps to run tests, from checking out the repo, setting up python & python virtualenv, install dependencies, and lastly, run tests
+    steps: # steps to run tests: checking out repo, setting up python & virtualenv, install dependencies, and run tests
       - name: Checkout Repository
         uses: actions/checkout@v7
 
